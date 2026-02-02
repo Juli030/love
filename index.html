@@ -3,53 +3,67 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Uma coisa pra você 💌</title>
+  <title>Para você 💌</title>
   <style>
     :root{
-      --bg1:#0b1020;
-      --bg2:#1a0f2a;
+      --bg1:#07060a;
+      --bg2:#150015;
       --card: rgba(255,255,255,.08);
       --stroke: rgba(255,255,255,.14);
       --text: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.72);
-      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --shadow: 0 18px 60px rgba(0,0,0,.62);
       --radius: 18px;
+
+      --hot:#ff2d55;
+      --glow: 0 0 22px rgba(255,45,85,.55);
+
+      --gold:#ffd36a;
+      --silver:#cfd6e6;
     }
+
     *{box-sizing:border-box}
     body{
       margin:0; min-height:100vh;
       color:var(--text);
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background:
-        radial-gradient(1200px 600px at 20% 10%, #3b1a5a 0%, transparent 55%),
-        radial-gradient(900px 500px at 80% 20%, #1b4b6b 0%, transparent 60%),
+        radial-gradient(900px 520px at 20% 10%, rgba(255,45,85,.18) 0%, transparent 55%),
+        radial-gradient(800px 520px at 80% 20%, rgba(255,211,106,.10) 0%, transparent 60%),
+        radial-gradient(700px 520px at 50% 90%, rgba(166,83,255,.10) 0%, transparent 60%),
         linear-gradient(135deg, var(--bg1), var(--bg2));
       overflow:hidden;
     }
+
     .topbar{
       position:fixed; inset:18px 18px auto 18px;
       display:flex; gap:12px; align-items:center; justify-content:space-between;
       z-index:3;
+      pointer-events:none;
     }
+    .brand, .counter{
+      pointer-events:auto;
+    }
+
     .brand{
       display:flex; gap:10px; align-items:center;
       padding:10px 14px;
-      border:1px solid var(--stroke);
-      background:var(--card);
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
       backdrop-filter: blur(10px);
       border-radius:999px;
       box-shadow: var(--shadow);
     }
     .dot{
       width:10px; height:10px; border-radius:50%;
-      background: #ff4d6d;
-      box-shadow: 0 0 18px rgba(255,77,109,.55);
+      background: var(--hot);
+      box-shadow: var(--glow);
     }
     .brand small{color:var(--muted)}
     .counter{
       padding:10px 14px;
-      border:1px solid var(--stroke);
-      background:var(--card);
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
       backdrop-filter: blur(10px);
       border-radius:999px;
       box-shadow: var(--shadow);
@@ -68,42 +82,43 @@
       max-width:720px;
       text-align:center;
       padding:18px 18px 22px;
-      border:1px solid var(--stroke);
+      border:1px solid rgba(255,255,255,.16);
       background: rgba(255,255,255,.06);
-      border-radius: var(--radius);
+      border-radius: 22px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(10px);
     }
     .hint h1{
       margin:0 0 8px;
       font-size: clamp(20px, 4vw, 34px);
-      letter-spacing: .2px;
+      letter-spacing: .3px;
+      text-transform: uppercase;
     }
     .hint p{
       margin:0;
       color:var(--muted);
-      line-height:1.5;
+      line-height:1.55;
       font-size: clamp(14px, 2.5vw, 16px);
     }
     .hint button{
       margin-top:14px;
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,45,85,.16);
       color:var(--text);
       padding:10px 14px;
       border-radius: 999px;
       cursor:pointer;
       transition:.2s transform, .2s background;
+      box-shadow: 0 10px 40px rgba(0,0,0,.35);
     }
-    .hint button:hover{ transform: translateY(-1px); background: rgba(255,255,255,.14); }
+    .hint button:hover{ transform: translateY(-1px); background: rgba(255,45,85,.22); }
 
     /* Popups */
     .popup{
       position:absolute;
-      width:min(360px, calc(100vw - 40px));
-      border:1px solid var(--stroke);
-      background: rgba(20, 18, 35, .72);
-      border-radius: var(--radius);
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(16, 10, 20, .72);
+      border-radius: 22px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(12px);
       overflow:hidden;
@@ -114,6 +129,28 @@
       from{ transform: scale(.96); opacity:0; }
       to{ transform: scale(1); opacity:1; }
     }
+
+    /* Glitter border vibe */
+    .popup::before{
+      content:"";
+      position:absolute; inset:0;
+      padding:1px;
+      border-radius:22px;
+      background: linear-gradient(135deg,
+        rgba(255,45,85,.70),
+        rgba(255,211,106,.55),
+        rgba(255,255,255,.30),
+        rgba(255,45,85,.55)
+      );
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events:none;
+      opacity:.55;
+    }
+
     .popup .head{
       display:flex; align-items:center; justify-content:space-between;
       padding:10px 12px;
@@ -122,11 +159,23 @@
       cursor:grab;
     }
     .popup .title{
-      display:flex; gap:8px; align-items:center;
-      font-weight:600;
-      font-size: 13px;
+      display:flex; gap:10px; align-items:center;
+      font-weight:800;
+      font-size: 12px;
+      letter-spacing: .8px;
+      text-transform: uppercase;
       color: rgba(255,255,255,.88);
     }
+
+    .badge{
+      font-size:11px;
+      padding:4px 8px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.78);
+    }
+
     .traffic{
       display:flex; gap:6px; align-items:center;
     }
@@ -139,31 +188,85 @@
     .traffic i:nth-child(3){ background:#28c840; }
 
     .popup .body{
-      padding:14px 14px 12px;
-      color: rgba(255,255,255,.90);
-      line-height:1.5;
+      padding:14px 14px 10px;
+      color: rgba(255,255,255,.92);
+      line-height:1.55;
       font-size: 15px;
     }
-    .popup .foot{
-      display:flex; justify-content:flex-end; gap:10px;
-      padding:0 12px 12px;
+
+    .popup .body .tiny{
+      display:block;
+      margin-top:10px;
+      color: rgba(255,255,255,.62);
+      font-size: 12px;
+      letter-spacing: .3px;
     }
+
+    .popup .foot{
+      display:flex; justify-content:space-between; gap:10px;
+      padding:0 12px 12px;
+      align-items:center;
+    }
+
+    .spark{
+      font-size: 12px;
+      color: rgba(255,255,255,.65);
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+
     .btn{
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
       color: var(--text);
       padding:8px 12px;
-      border-radius: 12px;
+      border-radius: 14px;
       cursor:pointer;
       transition:.2s transform, .2s background;
       font-size: 13px;
     }
-    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.14); }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
     .btn.primary{
-      border-color: rgba(255,77,109,.45);
-      background: rgba(255,77,109,.18);
+      border-color: rgba(255,45,85,.55);
+      background: rgba(255,45,85,.18);
+      box-shadow: 0 0 0 1px rgba(255,45,85,.10), 0 0 26px rgba(255,45,85,.12);
     }
-    .btn.primary:hover{ background: rgba(255,77,109,.24); }
+    .btn.primary:hover{ background: rgba(255,45,85,.26); }
+
+    /* Big popup */
+    .popup.big{
+      width: min(820px, calc(100vw - 40px));
+      border-radius: 28px;
+    }
+    .popup.big::before{
+      border-radius: 28px;
+      opacity:.75;
+    }
+    .popup.big .head{
+      padding: 12px 14px;
+    }
+    .bigText{
+      padding: 22px 18px 6px;
+      text-align:center;
+    }
+    .bigText .line1{
+      font-weight: 900;
+      font-size: clamp(22px, 5vw, 44px);
+      letter-spacing: .6px;
+      text-transform: uppercase;
+    }
+    .bigText .line2{
+      margin-top: 10px;
+      font-size: clamp(14px, 2.5vw, 18px);
+      color: rgba(255,255,255,.72);
+    }
+    .bigText .heart{
+      display:inline-block;
+      margin-top: 12px;
+      font-size: 28px;
+      filter: drop-shadow(0 0 18px rgba(255,45,85,.35));
+    }
 
     /* Final overlay */
     .overlay{
@@ -171,37 +274,52 @@
       display:none;
       align-items:center; justify-content:center;
       padding:24px;
-      background: rgba(0,0,0,.55);
-      backdrop-filter: blur(6px);
+      background: rgba(0,0,0,.60);
+      backdrop-filter: blur(7px);
       z-index:10;
     }
     .final{
       width:min(560px, 100%);
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(20, 18, 35, .78);
-      border-radius: 24px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(16, 10, 20, .78);
+      border-radius: 26px;
       box-shadow: var(--shadow);
       padding:18px 18px 16px;
       text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .final::before{
+      content:"";
+      position:absolute; inset:-40%;
+      background: radial-gradient(circle, rgba(255,45,85,.20) 0%, transparent 60%);
+      transform: rotate(18deg);
+      pointer-events:none;
     }
     .final h2{
+      position:relative;
       margin:8px 0 6px;
       font-size: clamp(20px, 5vw, 34px);
+      text-transform: uppercase;
+      letter-spacing:.6px;
     }
     .final p{
+      position:relative;
       margin:0 0 14px;
       color: var(--muted);
       line-height:1.5;
       font-size: 15px;
     }
     .actions{
+      position:relative;
       display:flex; justify-content:center; gap:10px; flex-wrap:wrap;
       margin-top: 10px;
     }
     .smallnote{
+      position:relative;
       margin-top:10px;
       font-size: 12px;
-      color: rgba(255,255,255,.55);
+      color: rgba(255,255,255,.60);
     }
   </style>
 </head>
@@ -210,8 +328,8 @@
     <div class="brand">
       <span class="dot"></span>
       <div>
-        <div style="font-weight:700; font-size:13px;">Arquivo: coração.zip</div>
-        <small>Abra, feche, descubra…</small>
+        <div style="font-weight:900; font-size:13px; letter-spacing:.7px; text-transform:uppercase;">Tour do Coração</div>
+        <small>Feche todos os pop-ups pra desbloquear o final</small>
       </div>
     </div>
     <div class="counter" id="counter">0/0</div>
@@ -219,10 +337,10 @@
 
   <div class="stage">
     <div class="hint" id="hint">
-      <h1>Tem algumas coisinhas pra você 💌</h1>
+      <h1>Uma coleção de coisinhas pra você 💋</h1>
       <p>
-        Vai aparecer uma coleção de pop-ups. <br/>
-        Feche todos para desbloquear a mensagem final.
+        Vai chover pop-up fofinho. Fecha tudo e eu te mostro o último. <br/>
+        Dica: dá pra arrastar os cards pela barrinha de cima.
       </p>
       <button id="startBtn">Começar</button>
     </div>
@@ -230,11 +348,11 @@
 
   <div class="overlay" id="overlay">
     <div class="final">
-      <div style="font-size:34px;">💘</div>
-      <h2>Você aceita namorar comigo?</h2>
+      <div style="font-size:34px; position:relative;">💘</div>
+      <h2>Aceita namorar cmg minha chatinha?</h2>
       <p>
-        Prometo ser bom em duas coisas: <br/>
-        cuidar de você e te fazer sorrir (mesmo quando eu travar o código).
+        Eu não consigo prometer perfeição, mas consigo prometer presença,
+        carinho e um “boa noite” que vira abrigo.
       </p>
       <div class="actions">
         <button class="btn primary" id="yesBtn">Sim</button>
@@ -246,18 +364,40 @@
 
   <script>
     // ✨ PERSONALIZE AQUI ✨
+    // Se quiser, eu adapto as frases com detalhes de vocês.
     const messages = [
-      "Eu gosto do jeito que você faz o mundo parecer menos pesado.",
-      "Se eu pudesse, eu colocava teu sorriso como atalho na minha área de trabalho.",
-      "Você tem um talento raro: deixar o simples bonito.",
-      "Tem dias que minha cabeça vira bagunça… e você é a parte que acalma.",
-      "Eu queria te contar isso do meu jeito: com um pouquinho de surpresa.",
-      "Quando você aparece, até notificação vira coisa boa.",
-      "Eu não sei o nome exato do que eu sinto… mas eu sei pra quem é.",
-      "Ok, falta pouco. Continua fechando. 👀"
+      "Você tem um jeito raro de deixar tudo mais bonito só por existir.",
+      "Eu gosto de você no detalhe: no riso, na calma, no jeitinho.",
+      "Se eu fosse música, eu ia querer ser a sua favorita.",
+      "Você é aquela parte do meu dia que eu espero sem perceber.",
+      "Quando você aparece, até o silêncio fica confortável.",
+      "Eu gosto do jeito que você cuida do mundo, mesmo sem notar.",
+      "Tem carinho em você que parece luz acesa.",
+      "Eu penso em você e meu peito fica mais leve. Isso é injusto (e ótimo).",
+      "Você é a prova viva de que o simples pode ser incrível.",
+      "Eu gosto de você com uma certeza calma, daquelas que aquecem.",
+      "Se eu pudesse, eu te guardava num lugar seguro: bem aqui comigo.",
+      "Você faz meu cérebro virar confete e minha voz virar sorriso.",
+      "Você é meu tipo de caos bom: o que melhora tudo.",
+      "Eu queria te dizer isso pessoalmente, mas achei mais divertido assim.",
+      "Você merece um amor que não some, não hesita, não economiza.",
+      "Obrigada por existir do jeitinho que existe (sim, eu gosto muito).",
+      "Se o mundo fosse uma playlist, você seria a música que eu repito.",
+      "Meu coração pediu para avisar: ele gosta de você faz tempo.",
+      "Você é meu pensamento favorito quando eu deveria estar focando.",
+      "Seu nome combina com a palavra ‘casa’.",
+      "Ok… tá ficando sério. Continua fechando. 👀",
+      "Quase lá. Última fase chegando. 💋",
     ];
 
-    // Config
+    // Aumenta pop-ups para "encher a tela"
+    const TARGET_POPUPS = 22;     // quantos pop-ups no total (tela cheia)
+    const POPUPS_DELAY_MS = 80;   // velocidade que eles aparecem
+
+    // Popup gigante pré-final
+    const BIG_POPUP_TEXT = "I was made for lovin’ you baby";
+    const BIG_POPUP_SUB  = "Agora fecha esse e vê o que eu queria te perguntar…";
+
     const stage = document.querySelector(".stage");
     const startBtn = document.getElementById("startBtn");
     const hint = document.getElementById("hint");
@@ -267,62 +407,16 @@
     const yesBtn = document.getElementById("yesBtn");
     const thinkBtn = document.getElementById("thinkBtn");
 
-    let openCount = 0;
+    let closedCount = 0;
     let z = 5;
+    let totalToClose = 0;
 
     function updateCounter(){
-      counter.textContent = `${messages.length - openCount}/${messages.length}`;
+      const remaining = Math.max(0, totalToClose - closedCount);
+      counter.textContent = `${remaining}/${totalToClose}`;
     }
 
     function rand(min, max){ return Math.random() * (max - min) + min; }
-
-    function createPopup(text, idx){
-      const el = document.createElement("div");
-      el.className = "popup";
-      el.style.zIndex = z++;
-
-      // Position
-      const x = rand(24, window.innerWidth - 24 - 360);
-      const y = rand(80, window.innerHeight - 160);
-      el.style.left = `${Math.max(14, x)}px`;
-      el.style.top  = `${Math.max(70, y)}px`;
-
-      el.innerHTML = `
-        <div class="head">
-          <div class="title">
-            <span style="opacity:.85">Mensagem</span>
-            <span style="opacity:.55">#${String(idx+1).padStart(2,"0")}</span>
-          </div>
-          <div class="traffic" aria-hidden="true"><i></i><i></i><i></i></div>
-        </div>
-        <div class="body">${escapeHtml(text)}</div>
-        <div class="foot">
-          <button class="btn" data-action="close">Fechar</button>
-        </div>
-      `;
-
-      // Bring to front on click
-      el.addEventListener("mousedown", () => el.style.zIndex = z++);
-
-      // Close
-      el.querySelector('[data-action="close"]').addEventListener("click", () => {
-        el.remove();
-        openCount++;
-        updateCounter();
-        if(openCount >= messages.length){
-          setTimeout(showFinal, 300);
-        }
-      });
-
-      // Drag
-      dragElement(el, el.querySelector(".head"));
-
-      stage.appendChild(el);
-    }
-
-    function showFinal(){
-      overlay.style.display = "flex";
-    }
 
     function escapeHtml(str){
       return String(str)
@@ -331,6 +425,123 @@
         .replaceAll(">","&gt;")
         .replaceAll('"',"&quot;")
         .replaceAll("'","&#039;");
+    }
+
+    function placeOnScreen(el, wGuess=360, hGuess=180){
+      const maxX = Math.max(10, window.innerWidth - 10 - wGuess);
+      const maxY = Math.max(70, window.innerHeight - 10 - hGuess);
+      const x = rand(10, maxX);
+      const y = rand(70, maxY);
+      el.style.left = `${x}px`;
+      el.style.top  = `${y}px`;
+    }
+
+    function createPopup(text, idx){
+      const el = document.createElement("div");
+      el.className = "popup";
+      el.style.zIndex = z++;
+      el.style.width = `${Math.floor(rand(300, 380))}px`;
+
+      el.innerHTML = `
+        <div class="head">
+          <div class="title">
+            <span>LOVE POP-UP</span>
+            <span class="badge">#${String(idx+1).padStart(2,"0")}</span>
+          </div>
+          <div class="traffic" aria-hidden="true"><i></i><i></i><i></i></div>
+        </div>
+        <div class="body">
+          ${escapeHtml(text)}
+          <span class="tiny">feche para continuar ✦</span>
+        </div>
+        <div class="foot">
+          <div class="spark">💋 <span style="opacity:.75">KISS vibes</span></div>
+          <button class="btn primary" data-action="close">Fechar</button>
+        </div>
+      `;
+
+      // Position after insert so we can measure
+      stage.appendChild(el);
+      const rect = el.getBoundingClientRect();
+      placeOnScreen(el, rect.width, rect.height);
+
+      // Bring to front
+      el.addEventListener("mousedown", () => el.style.zIndex = z++);
+
+      // Close logic
+      el.querySelector('[data-action="close"]').addEventListener("click", () => {
+        el.remove();
+        closedCount++;
+        updateCounter();
+        checkProgress();
+      });
+
+      // Drag
+      dragElement(el, el.querySelector(".head"));
+
+      return el;
+    }
+
+    function createBigPopup(){
+      const el = document.createElement("div");
+      el.className = "popup big";
+      el.style.zIndex = z++;
+
+      el.innerHTML = `
+        <div class="head">
+          <div class="title">
+            <span>FINAL TRACK</span>
+            <span class="badge">SPECIAL</span>
+          </div>
+          <div class="traffic" aria-hidden="true"><i></i><i></i><i></i></div>
+        </div>
+        <div class="bigText">
+          <div class="line1">${escapeHtml(BIG_POPUP_TEXT)}</div>
+          <div class="line2">${escapeHtml(BIG_POPUP_SUB)}</div>
+          <div class="heart">💘</div>
+        </div>
+        <div class="foot">
+          <div class="spark">🎸 <span style="opacity:.75">close pra revelar</span></div>
+          <button class="btn primary" data-action="close">Fechar</button>
+        </div>
+      `;
+
+      stage.appendChild(el);
+
+      // Center it
+      const rect = el.getBoundingClientRect();
+      el.style.left = `${Math.max(10, (window.innerWidth - rect.width)/2)}px`;
+      el.style.top  = `${Math.max(80, (window.innerHeight - rect.height)/2)}px`;
+
+      el.addEventListener("mousedown", () => el.style.zIndex = z++);
+
+      el.querySelector('[data-action="close"]').addEventListener("click", () => {
+        el.remove();
+        closedCount++;
+        updateCounter();
+        checkProgress(true);
+      });
+
+      dragElement(el, el.querySelector(".head"));
+    }
+
+    let bigShown = false;
+    let finalShown = false;
+
+    function checkProgress(fromBigClose=false){
+      // Quando fechar todos os "pequenos", aparece o BIG
+      if(!bigShown && closedCount >= (totalToClose - 1)){
+        bigShown = true;
+        // Não mostra overlay ainda, primeiro vem o big popup
+        setTimeout(createBigPopup, 250);
+        return;
+      }
+
+      // Quando fechar o BIG (último), aparece o pedido
+      if(bigShown && !finalShown && closedCount >= totalToClose){
+        finalShown = true;
+        setTimeout(() => overlay.style.display = "flex", 250);
+      }
     }
 
     function dragElement(el, handle){
@@ -367,28 +578,49 @@
 
     function start(){
       hint.style.display = "none";
-      openCount = 0;
+      overlay.style.display = "none";
+      note.textContent = "";
+      yesBtn.disabled = false;
+      thinkBtn.disabled = false;
+
+      // Reset state
+      closedCount = 0;
+      bigShown = false;
+      finalShown = false;
+
+      // Limpando popups antigos
+      document.querySelectorAll(".popup").forEach(p => p.remove());
+
+      // Gerar lista de popups: TARGET_POPUPS-1 pequenos, 1 big depois
+      const smallCount = Math.max(8, TARGET_POPUPS - 1);
+      totalToClose = smallCount + 1; // +1 é o BIG
       updateCounter();
 
-      // Spawn with tiny delays for drama
-      messages.forEach((m, i) => setTimeout(() => createPopup(m, i), 140 * i));
+      // Criar muitos popups, repetindo mensagens se precisar
+      const pool = [];
+      for(let i=0; i<smallCount; i++){
+        pool.push(messages[i % messages.length]);
+      }
+
+      pool.forEach((m, i) => {
+        setTimeout(() => createPopup(m, i), POPUPS_DELAY_MS * i);
+      });
     }
 
     startBtn.addEventListener("click", start);
 
     yesBtn.addEventListener("click", () => {
-      note.textContent = "Tá… agora eu tô oficialmente feliz 😄💘";
+      note.textContent = "Então vem cá… agora é oficialmente nós dois 💘";
       yesBtn.disabled = true;
       thinkBtn.disabled = true;
     });
 
     thinkBtn.addEventListener("click", () => {
-      note.textContent = "Tudo bem. Eu espero. Mas eu vou continuar gostando de você do mesmo jeito 🙂";
+      note.textContent = "Tá tudo bem. Eu gosto de você com calma também 🙂";
       yesBtn.disabled = true;
       thinkBtn.disabled = true;
     });
 
-    // Initialize
     updateCounter();
   </script>
 </body>
