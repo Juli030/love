@@ -423,12 +423,101 @@
       line-height:1.5;
       font-size: 15px;
     }
+
+    /* ===== SHOW LIGHTS (só no ENCORE) ===== */
+    .showLights{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      border-radius: 28px;
+      z-index: 0;
+    }
+    .beam{
+      position:absolute;
+      top:-40%;
+      width: 140px;
+      height: 220%;
+      opacity:.55;
+      filter: blur(0.2px);
+      transform-origin: top center;
+      mix-blend-mode: screen;
+      background: linear-gradient(to bottom,
+        rgba(255,255,255,.0) 0%,
+        rgba(255,45,85,.25) 25%,
+        rgba(255,211,106,.18) 55%,
+        rgba(255,255,255,.0) 100%
+      );
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      animation: sweep 2.6s ease-in-out infinite alternate;
+    }
+    .beam.b1{ left: 10%; animation-duration: 2.2s; transform: rotate(-12deg); opacity:.45; }
+    .beam.b2{ left: 35%; animation-duration: 2.8s; transform: rotate(8deg);  opacity:.55; }
+    .beam.b3{ left: 60%; animation-duration: 2.4s; transform: rotate(-6deg); opacity:.50; }
+    .beam.b4{ left: 82%; animation-duration: 3.0s; transform: rotate(14deg); opacity:.42; }
+
+    @keyframes sweep{
+      0%   { transform: rotate(-16deg) translateY(0); opacity:.35; }
+      50%  { transform: rotate(10deg) translateY(6px); opacity:.55; }
+      100% { transform: rotate(-8deg) translateY(0); opacity:.40; }
+    }
+
+    .spot{
+      position:absolute;
+      top: -40px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      filter: blur(6px);
+      opacity:.35;
+      mix-blend-mode: screen;
+      animation: floaty 2.8s ease-in-out infinite alternate;
+      background: radial-gradient(circle at 35% 35%, rgba(255,255,255,.55), rgba(255,45,85,.18), transparent 65%);
+    }
+    .spot.s1{ left: 6%;  animation-duration: 2.4s; }
+    .spot.s2{ left: 40%; animation-duration: 3.0s; opacity:.28; }
+    .spot.s3{ left: 72%; animation-duration: 2.6s; }
+
+    @keyframes floaty{
+      from{ transform: translateY(0) scale(1); }
+      to  { transform: translateY(14px) scale(1.06); }
+    }
+
+    .strobe{
+      position:absolute;
+      inset:0;
+      background: rgba(255,255,255,.08);
+      opacity:0;
+      animation: strobe 1.2s linear infinite;
+      mix-blend-mode: screen;
+    }
+    @keyframes strobe{
+      0%, 86%, 100% { opacity: 0; }
+      88% { opacity: .32; }
+      90% { opacity: 0; }
+      92% { opacity: .18; }
+      94% { opacity: 0; }
+    }
+
+    .encoreCard > *:not(.showLights){
+      position: relative;
+      z-index: 1;
+    }
   </style>
 </head>
 <body>
   <!-- Música (coloque o arquivo made_for_lovin_you.mp3 na mesma pasta do index.html) -->
   <audio id="bgMusic" preload="auto" loop>
     <source src="made_for_lovin_you.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Efeitos (coloque crowd_cheer.mp3 e applause.mp3 na mesma pasta do index.html) -->
+  <audio id="crowdCheer" preload="auto">
+    <source src="crowd_cheer.mp3" type="audio/mpeg">
+  </audio>
+
+  <audio id="applause" preload="auto">
+    <source src="applause.mp3" type="audio/mpeg">
   </audio>
 
   <div class="topbar">
@@ -450,12 +539,11 @@
 
   <div class="stage">
     <div class="hint" id="hint">
-      <h1>Uma coleção de coisinhas pra você 💋</h1>
+      <h1>Está preparada para o possível início da nossa turnê? 🎸</h1>
       <p>
-        Vai chover pop-up fofinho. Fecha tudo e eu te mostro o último. <br/>
-        Dica: dá pra arrastar os cards pela barrinha de cima.
+        Vai chover pop-up. Fecha tudo e eu te mostro o último. <br/>
       </p>
-      <button id="startBtn">Começar</button>
+      <button id="startBtn">Iniciar o Show 🤘</button>
     </div>
   </div>
 
@@ -466,7 +554,7 @@
       <h2>Aceita namorar cmg minha chatinha?</h2>
       <p>
         Eu não consigo prometer perfeição, mas consigo prometer presença,
-        carinho e um “boa noite” que vira abrigo.
+        carinho e um abrigo so seu ao meu lado para o resto de nossas vidas.
       </p>
       <div class="actions">
         <button class="btn primary" id="yesBtn">Sim</button>
@@ -479,12 +567,25 @@
   <!-- ENCORE: aparece só se clicar SIM -->
   <div class="encoreOverlay" id="encoreOverlay">
     <div class="encoreCard">
+      <div class="showLights" aria-hidden="true">
+        <div class="spot s1"></div>
+        <div class="spot s2"></div>
+        <div class="spot s3"></div>
+
+        <div class="beam b1"></div>
+        <div class="beam b2"></div>
+        <div class="beam b3"></div>
+        <div class="beam b4"></div>
+
+        <div class="strobe"></div>
+      </div>
+
       <div class="encoreBadge">ENCORE 💋</div>
       <div class="encoreTitle">
         Esse ingresso não é só lembrança.<br/>
         É o começo da nossa turnê juntos.
       </div>
-      <div class="encoreSub">Agora oficialmente: vocês tão em turnê. 🖤🎸</div>
+      <div class="encoreSub">Agora oficialmente nossa turnê se inicia. 🖤🎸</div>
       <div class="actions">
         <button class="btn primary" id="encoreClose">OK, minha estrela ⭐</button>
       </div>
@@ -542,6 +643,20 @@
     const soundLabel = document.getElementById("soundLabel");
     let soundOn = false;
 
+    // Efeitos
+    const crowdCheer = document.getElementById("crowdCheer");
+    const applause = document.getElementById("applause");
+
+    function playSfxSafe(audioEl, { volume = 0.7 } = {}){
+      if(!audioEl) return;
+      try{
+        audioEl.pause();
+        audioEl.currentTime = 0;
+        audioEl.volume = volume;
+        audioEl.play().catch(()=>{});
+      }catch(e){}
+    }
+
     function setSoundUI(){
       soundBtn.firstChild.textContent = soundOn ? "🔊 " : "🔇 ";
       soundLabel.textContent = soundOn ? "Pausar" : "Som";
@@ -560,8 +675,6 @@
         }
         setSoundUI();
       }catch(e){
-        // Alguns navegadores precisam de interação do usuário (botão já é interação),
-        // mas se o arquivo não existir, ele também cai aqui.
         soundOn = false;
         setSoundUI();
       }
@@ -578,7 +691,6 @@
 
     function updateCounter(){
       const remaining = Math.max(0, totalToClose - closedCount);
-      // counter agora tem span + botão, então atualiza só o span
       counter.querySelector("span").textContent = `${remaining}/${totalToClose}`;
     }
 
@@ -689,14 +801,12 @@
     let finalShown = false;
 
     function checkProgress(){
-      // Quando fechar todos os "pequenos", aparece o BIG
       if(!bigShown && closedCount >= (totalToClose - 1)){
         bigShown = true;
         setTimeout(createBigPopup, 250);
         return;
       }
 
-      // Quando fechar o BIG (último), aparece o pedido
       if(bigShown && !finalShown && closedCount >= totalToClose){
         finalShown = true;
         setTimeout(() => overlay.style.display = "flex", 250);
@@ -743,27 +853,21 @@
       yesBtn.disabled = false;
       thinkBtn.disabled = false;
 
-      // tenta dar play suave quando começar (se o arquivo existir e o navegador deixar)
-      // se não tiver arquivo, simplesmente não toca e não quebra nada
       if(soundOn){
         bgMusic.volume = 0.35;
         bgMusic.play().catch(()=>{});
       }
 
-      // Reset state
       closedCount = 0;
       bigShown = false;
       finalShown = false;
 
-      // Limpando popups antigos
       document.querySelectorAll(".popup").forEach(p => p.remove());
 
-      // Gerar lista de popups: TARGET_POPUPS-1 pequenos, 1 big depois
       const smallCount = Math.max(8, TARGET_POPUPS - 1);
-      totalToClose = smallCount + 1; // +1 é o BIG
+      totalToClose = smallCount + 1;
       updateCounter();
 
-      // Criar muitos popups, repetindo mensagens se precisar
       const pool = [];
       for(let i=0; i<smallCount; i++){
         pool.push(messages[i % messages.length]);
@@ -775,18 +879,13 @@
     }
 
     startBtn.addEventListener("click", async () => {
-      // se a pessoa clicar em "Começar", você pode ligar o som automaticamente uma vez
-      // (navegador permite porque é clique do usuário)
       if(!soundOn){
-        // tenta tocar baixo automaticamente, se existir o arquivo
         try{
           bgMusic.volume = 0.35;
           await bgMusic.play();
           soundOn = true;
           setSoundUI();
-        }catch(e){
-          // se falhar, tudo bem, ela pode ativar no botão
-        }
+        }catch(e){}
       }
       start();
     });
@@ -794,10 +893,26 @@
     function showEncore(){
       const encore = document.getElementById("encoreOverlay");
       encore.style.display = "flex";
+
+      // plateia vem abaixo 🎉
+      playSfxSafe(crowdCheer, { volume: 0.85 });
+
+      // aplausos entram logo depois
+      setTimeout(() => playSfxSafe(applause, { volume: 0.75 }), 650);
+
+      // boost rápido na música
+      if(soundOn){
+        const original = bgMusic.volume;
+        bgMusic.volume = Math.min(0.55, original + 0.15);
+        setTimeout(() => { bgMusic.volume = original; }, 2000);
+      }
     }
 
     document.getElementById("encoreClose").addEventListener("click", () => {
       document.getElementById("encoreOverlay").style.display = "none";
+
+      if(crowdCheer){ crowdCheer.pause(); crowdCheer.currentTime = 0; }
+      if(applause){ applause.pause(); applause.currentTime = 0; }
     });
 
     yesBtn.addEventListener("click", () => {
@@ -805,7 +920,6 @@
       yesBtn.disabled = true;
       thinkBtn.disabled = true;
 
-      // ✅ aqui entra a condição do SIM
       setTimeout(showEncore, 350);
     });
 
