@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Para você 💌</title>
+  <title>Está preparada para o possível início da nossa turnê? 🎸</title>
   <style>
     :root{
       --bg1:#07060a;
@@ -33,6 +33,26 @@
         radial-gradient(700px 520px at 50% 90%, rgba(166,83,255,.10) 0%, transparent 60%),
         linear-gradient(135deg, var(--bg1), var(--bg2));
       overflow:hidden;
+    }
+
+    /* brilhinhos sutis no fundo */
+    body::before{
+      content:"";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.35) 50%, transparent 55%),
+        radial-gradient(2px 2px at 70% 20%, rgba(255,255,255,.25) 50%, transparent 55%),
+        radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,.20) 50%, transparent 55%),
+        radial-gradient(1px 1px at 85% 75%, rgba(255,255,255,.18) 50%, transparent 55%);
+      opacity: .55;
+      filter: blur(.2px);
+      animation: twinkle 3.5s infinite alternate ease-in-out;
+    }
+    @keyframes twinkle{
+      from{ opacity: .40; transform: translateY(0); }
+      to{ opacity: .70; transform: translateY(-2px); }
     }
 
     .topbar{
@@ -69,7 +89,28 @@
       box-shadow: var(--shadow);
       color:var(--muted);
       font-variant-numeric: tabular-nums;
+      display:flex;
+      align-items:center;
+      gap:10px;
     }
+
+    /* botão som */
+    .soundBtn{
+      pointer-events:auto;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      padding:7px 10px;
+      border-radius: 999px;
+      cursor:pointer;
+      transition:.2s transform, .2s background;
+      font-size: 12px;
+      user-select:none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .soundBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.12); }
 
     .stage{
       position:relative;
@@ -148,7 +189,7 @@
       -webkit-mask-composite: xor;
       mask-composite: exclude;
       pointer-events:none;
-      opacity:.55;
+      opacity:.62;
     }
 
     .popup .head{
@@ -268,7 +309,7 @@
       filter: drop-shadow(0 0 18px rgba(255,45,85,.35));
     }
 
-    /* Final overlay */
+    /* Final overlay (pedido) */
     .overlay{
       position:fixed; inset:0;
       display:none;
@@ -321,9 +362,75 @@
       font-size: 12px;
       color: rgba(255,255,255,.60);
     }
+
+    /* ENCORE overlay (só no SIM) */
+    .encoreOverlay{
+      position:fixed; inset:0;
+      display:none;
+      align-items:center; justify-content:center;
+      padding:24px;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(8px);
+      z-index:20;
+    }
+    .encoreCard{
+      width:min(820px, 100%);
+      border:1px solid rgba(255,255,255,.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      border-radius: 28px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.65), 0 0 40px rgba(255,45,85,.16);
+      padding: 22px 18px 18px;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .encoreCard::before{
+      content:"";
+      position:absolute; inset:-35%;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,45,85,.22) 0%, transparent 58%),
+        radial-gradient(circle at 75% 20%, rgba(255,211,106,.12) 0%, transparent 60%),
+        radial-gradient(circle at 50% 80%, rgba(255,255,255,.10) 0%, transparent 60%);
+      transform: rotate(12deg);
+      pointer-events:none;
+    }
+    .encoreBadge{
+      position:relative;
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:12px;
+      letter-spacing:.9px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.25);
+      color: rgba(255,255,255,.92);
+      box-shadow: 0 0 20px rgba(255,45,85,.14);
+    }
+    .encoreTitle{
+      position:relative;
+      margin:14px 0 10px;
+      font-size: clamp(24px, 3.8vw, 46px);
+      line-height:1.12;
+      text-transform: uppercase;
+      letter-spacing:.6px;
+      text-shadow: 0 0 24px rgba(255,45,85,.16);
+    }
+    .encoreSub{
+      position:relative;
+      margin:0 0 14px;
+      color: rgba(255,255,255,.78);
+      line-height:1.5;
+      font-size: 15px;
+    }
   </style>
 </head>
 <body>
+  <!-- Música (coloque o arquivo made_for_lovin_you.mp3 na mesma pasta do index.html) -->
+  <audio id="bgMusic" preload="auto" loop>
+    <source src="made_for_lovin_you.mp3" type="audio/mpeg">
+  </audio>
+
   <div class="topbar">
     <div class="brand">
       <span class="dot"></span>
@@ -332,7 +439,13 @@
         <small>Feche todos os pop-ups pra desbloquear o final</small>
       </div>
     </div>
-    <div class="counter" id="counter">0/0</div>
+
+    <div class="counter" id="counter">
+      <span>0/0</span>
+      <button class="soundBtn" id="soundBtn" title="Ativar/pausar música">
+        🔇 <span id="soundLabel">Som</span>
+      </button>
+    </div>
   </div>
 
   <div class="stage">
@@ -346,6 +459,7 @@
     </div>
   </div>
 
+  <!-- Overlay final (pedido) -->
   <div class="overlay" id="overlay">
     <div class="final">
       <div style="font-size:34px; position:relative;">💘</div>
@@ -362,9 +476,24 @@
     </div>
   </div>
 
+  <!-- ENCORE: aparece só se clicar SIM -->
+  <div class="encoreOverlay" id="encoreOverlay">
+    <div class="encoreCard">
+      <div class="encoreBadge">ENCORE 💋</div>
+      <div class="encoreTitle">
+        Esse ingresso não é só lembrança.<br/>
+        É o começo da nossa turnê juntos.
+      </div>
+      <div class="encoreSub">Agora oficialmente: vocês tão em turnê. 🖤🎸</div>
+      <div class="actions">
+        <button class="btn primary" id="encoreClose">OK, minha estrela ⭐</button>
+      </div>
+      <div class="smallnote">ps: essa parte só aparece no “Sim” 😌</div>
+    </div>
+  </div>
+
   <script>
     // ✨ PERSONALIZE AQUI ✨
-    // Se quiser, eu adapto as frases com detalhes de vocês.
     const messages = [
       "Você tem um jeito raro de deixar tudo mais bonito só por existir.",
       "Eu gosto de você no detalhe: no riso, na calma, no jeitinho.",
@@ -407,13 +536,50 @@
     const yesBtn = document.getElementById("yesBtn");
     const thinkBtn = document.getElementById("thinkBtn");
 
+    // Música
+    const bgMusic = document.getElementById("bgMusic");
+    const soundBtn = document.getElementById("soundBtn");
+    const soundLabel = document.getElementById("soundLabel");
+    let soundOn = false;
+
+    function setSoundUI(){
+      soundBtn.firstChild.textContent = soundOn ? "🔊 " : "🔇 ";
+      soundLabel.textContent = soundOn ? "Pausar" : "Som";
+      soundBtn.setAttribute("aria-pressed", soundOn ? "true" : "false");
+    }
+
+    async function toggleSound(){
+      try{
+        if(!soundOn){
+          bgMusic.volume = 0.35;
+          await bgMusic.play();
+          soundOn = true;
+        }else{
+          bgMusic.pause();
+          soundOn = false;
+        }
+        setSoundUI();
+      }catch(e){
+        // Alguns navegadores precisam de interação do usuário (botão já é interação),
+        // mas se o arquivo não existir, ele também cai aqui.
+        soundOn = false;
+        setSoundUI();
+      }
+    }
+
+    soundBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleSound();
+    });
+
     let closedCount = 0;
     let z = 5;
     let totalToClose = 0;
 
     function updateCounter(){
       const remaining = Math.max(0, totalToClose - closedCount);
-      counter.textContent = `${remaining}/${totalToClose}`;
+      // counter agora tem span + botão, então atualiza só o span
+      counter.querySelector("span").textContent = `${remaining}/${totalToClose}`;
     }
 
     function rand(min, max){ return Math.random() * (max - min) + min; }
@@ -460,15 +626,12 @@
         </div>
       `;
 
-      // Position after insert so we can measure
       stage.appendChild(el);
       const rect = el.getBoundingClientRect();
       placeOnScreen(el, rect.width, rect.height);
 
-      // Bring to front
       el.addEventListener("mousedown", () => el.style.zIndex = z++);
 
-      // Close logic
       el.querySelector('[data-action="close"]').addEventListener("click", () => {
         el.remove();
         closedCount++;
@@ -476,9 +639,7 @@
         checkProgress();
       });
 
-      // Drag
       dragElement(el, el.querySelector(".head"));
-
       return el;
     }
 
@@ -508,7 +669,6 @@
 
       stage.appendChild(el);
 
-      // Center it
       const rect = el.getBoundingClientRect();
       el.style.left = `${Math.max(10, (window.innerWidth - rect.width)/2)}px`;
       el.style.top  = `${Math.max(80, (window.innerHeight - rect.height)/2)}px`;
@@ -528,11 +688,10 @@
     let bigShown = false;
     let finalShown = false;
 
-    function checkProgress(fromBigClose=false){
+    function checkProgress(){
       // Quando fechar todos os "pequenos", aparece o BIG
       if(!bigShown && closedCount >= (totalToClose - 1)){
         bigShown = true;
-        // Não mostra overlay ainda, primeiro vem o big popup
         setTimeout(createBigPopup, 250);
         return;
       }
@@ -579,9 +738,17 @@
     function start(){
       hint.style.display = "none";
       overlay.style.display = "none";
+      document.getElementById("encoreOverlay").style.display = "none";
       note.textContent = "";
       yesBtn.disabled = false;
       thinkBtn.disabled = false;
+
+      // tenta dar play suave quando começar (se o arquivo existir e o navegador deixar)
+      // se não tiver arquivo, simplesmente não toca e não quebra nada
+      if(soundOn){
+        bgMusic.volume = 0.35;
+        bgMusic.play().catch(()=>{});
+      }
 
       // Reset state
       closedCount = 0;
@@ -607,12 +774,39 @@
       });
     }
 
-    startBtn.addEventListener("click", start);
+    startBtn.addEventListener("click", async () => {
+      // se a pessoa clicar em "Começar", você pode ligar o som automaticamente uma vez
+      // (navegador permite porque é clique do usuário)
+      if(!soundOn){
+        // tenta tocar baixo automaticamente, se existir o arquivo
+        try{
+          bgMusic.volume = 0.35;
+          await bgMusic.play();
+          soundOn = true;
+          setSoundUI();
+        }catch(e){
+          // se falhar, tudo bem, ela pode ativar no botão
+        }
+      }
+      start();
+    });
+
+    function showEncore(){
+      const encore = document.getElementById("encoreOverlay");
+      encore.style.display = "flex";
+    }
+
+    document.getElementById("encoreClose").addEventListener("click", () => {
+      document.getElementById("encoreOverlay").style.display = "none";
+    });
 
     yesBtn.addEventListener("click", () => {
       note.textContent = "Então vem cá… agora é oficialmente nós dois 💘";
       yesBtn.disabled = true;
       thinkBtn.disabled = true;
+
+      // ✅ aqui entra a condição do SIM
+      setTimeout(showEncore, 350);
     });
 
     thinkBtn.addEventListener("click", () => {
@@ -621,6 +815,7 @@
       thinkBtn.disabled = true;
     });
 
+    setSoundUI();
     updateCounter();
   </script>
 </body>
