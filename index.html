@@ -705,28 +705,27 @@
   </div>
 
   <script>
-    // ✨ PERSONALIZE AQUI ✨
     const messages = [
       "Você tem um jeito raro de deixar tudo mais bonito só por existir.",
       "Eu gosto de você no detalhe: no riso, na calma, no jeitinho.",
-      "Se eu fosse música, eu ia querer ser a sua favorita.",
+      "Se amar fosse palco, eu viveria em turnê ao seu lado.",
       "Você é aquela parte do meu dia que eu espero sem perceber.",
       "Quando você aparece, até o silêncio fica confortável.",
-      "Eu gosto do jeito que você cuida do mundo, mesmo sem notar.",
-      "Tem carinho em você que parece luz acesa.",
+      "Entre todas as melodias do mundo, a sua voz é minha favorita.",
+      "Você é meu “I was made for lovin’ you” particular",
       "Eu penso em você e meu peito fica mais leve. Isso é injusto (e ótimo).",
       "Você é a prova viva de que o simples pode ser incrível.",
       "Eu gosto de você com uma certeza calma, daquelas que aquecem.",
-      "Se eu pudesse, eu te guardava num lugar seguro: bem aqui comigo.",
+      "Nosso amor tem solo de guitarra: intenso, arrepiando até a alma.",
       "Você faz meu cérebro virar confete e minha voz virar sorriso.",
       "Você é meu tipo de caos bom: o que melhora tudo.",
       "Eu queria te dizer isso pessoalmente, mas achei mais divertido assim.",
       "Você merece um amor que não some, não hesita, não economiza.",
       "Obrigada por existir do jeitinho que existe (sim, eu gosto muito).",
       "Se o mundo fosse uma playlist, você seria a música que eu repito.",
-      "Meu coração pediu para avisar: ele gosta de você faz tempo.",
+      "Você é minha versão particular de “Nothing Else Matters” do Metallica.",
       "Você é meu pensamento favorito quando eu deveria estar focando.",
-      "Seu nome combina com a palavra ‘casa’.",
+      "Nosso amor tem intensidade digna de palco lotado e amplificador no máximo.",
       "Ok… tá ficando sério. Continua fechando. 👀",
       "Quase lá. Última fase chegando. 💋",
     ];
@@ -793,7 +792,6 @@
       toggleSound();
     });
 
-    // INTRO
     const kissIntro = document.getElementById("kissIntro");
     const btnEnterShow = document.getElementById("btnEnterShow");
 
@@ -933,7 +931,6 @@
       if(bigShown && !finalShown && closedCount >= totalToClose){
         finalShown = true;
         setTimeout(() => overlay.style.display = "flex", 250);
-        // ✅ NÃO coloca is-dodging aqui. Ele começa normal.
       }
     }
 
@@ -977,7 +974,6 @@
       yesBtn.disabled = false;
       thinkBtn.disabled = false;
 
-      // ✅ garante que volta ao normal no restart
       thinkBtn.classList.remove("is-dodging");
       thinkBtn.style.left = "";
       thinkBtn.style.top = "";
@@ -1046,7 +1042,6 @@
       setTimeout(showEncore, 350);
     });
 
-    // ===== ✅ BOTÃO FUGINDO SEM PASSAR POR CIMA DO SIM =====
     function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
     function rectsOverlap(a, b){
@@ -1071,7 +1066,6 @@
       const minY = padding;
       const maxY = Math.max(padding, boxRect.height - bh - padding);
 
-      // área do SIM em coordenadas locais
       const yesLocal = {
         left: yesRect.left - boxRect.left - 6,
         top: yesRect.top - boxRect.top - 6,
@@ -1098,7 +1092,6 @@
       if(note) note.textContent = "Eita… esse botão tá tímido 😳";
     }
 
-    // foge quando chega perto / tenta clicar
     thinkBtn.addEventListener("mouseenter", moveThinkButton);
     thinkBtn.addEventListener("mousedown", (e) => { e.preventDefault(); moveThinkButton(); });
     thinkBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveThinkButton(); }, { passive:false });
