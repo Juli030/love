@@ -340,12 +340,16 @@
       line-height:1.5;
       font-size: 15px;
     }
+
+    /* ✅ ALTERADO: mais altura pra pista do botão fugir */
     .actions{
-      position:relative; /* importante para o botão fugir */
+      position:relative;
       display:flex; justify-content:center; gap:10px; flex-wrap:wrap;
       margin-top: 10px;
-      min-height: 54px;
+      min-height: 70px;
+      padding-top: 10px;
     }
+
     .smallnote{
       position:relative;
       margin-top:10px;
@@ -353,13 +357,10 @@
       color: rgba(255,255,255,.60);
     }
 
-    /* Botão "Preciso pensar" quando entra no modo fuga */
+    /* ✅ ALTERADO: só vira absoluto quando estiver fugindo */
     #thinkBtn.is-dodging{
       position:absolute;
-      left: 50%;
-      top: 6px;
-      transform: translateX(-50%);
-      will-change: left, top, transform;
+      will-change: left, top;
       touch-action: none;
     }
 
@@ -623,7 +624,7 @@
     <source src="made_for_lovin_you.mp3" type="audio/mpeg">
   </audio>
 
-  <!-- Efeitos (coloque crowd_cheer.mp3 e applause.mp3 na mesma pasta do index.html) -->
+  <!-- Efeitos -->
   <audio id="crowdCheer" preload="auto">
     <source src="crowd_cheer.mp3" type="audio/mpeg">
   </audio>
@@ -652,9 +653,7 @@
   <div class="stage">
     <div class="hint" id="hint">
       <h1>Está preparada para o possível início da nossa turnê? 🎸</h1>
-      <p>
-        Vai chover pop-up. Fecha tudo e eu te mostro o último. <br/>
-      </p>
+      <p>Vai chover pop-up. Fecha tudo e eu te mostro o último. <br/></p>
       <button id="startBtn">Iniciar o Show 🤘</button>
     </div>
   </div>
@@ -732,11 +731,9 @@
       "Quase lá. Última fase chegando. 💋",
     ];
 
-    // Aumenta pop-ups para "encher a tela"
-    const TARGET_POPUPS = 22;     // quantos pop-ups no total (tela cheia)
-    const POPUPS_DELAY_MS = 80;   // velocidade que eles aparecem
+    const TARGET_POPUPS = 22;
+    const POPUPS_DELAY_MS = 80;
 
-    // Popup gigante pré-final
     const BIG_POPUP_TEXT = "I was made for lovin’ you baby";
     const BIG_POPUP_SUB  = "Agora fecha esse e vê o que eu queria te perguntar…";
 
@@ -750,13 +747,11 @@
     const thinkBtn = document.getElementById("thinkBtn");
     const finalActions = document.getElementById("finalActions");
 
-    // Música
     const bgMusic = document.getElementById("bgMusic");
     const soundBtn = document.getElementById("soundBtn");
     const soundLabel = document.getElementById("soundLabel");
     let soundOn = false;
 
-    // Efeitos
     const crowdCheer = document.getElementById("crowdCheer");
     const applause = document.getElementById("applause");
 
@@ -798,21 +793,17 @@
       toggleSound();
     });
 
-    // ===== INTRO: entrar no show =====
+    // INTRO
     const kissIntro = document.getElementById("kissIntro");
     const btnEnterShow = document.getElementById("btnEnterShow");
 
     btnEnterShow?.addEventListener("click", async () => {
-      // tenta iniciar a música (precisa ser em clique por causa do browser)
       try{
         bgMusic.volume = 0.35;
         await bgMusic.play();
         soundOn = true;
         setSoundUI();
-      }catch(e){
-        // se não tocar, ok
-      }
-
+      }catch(e){}
       kissIntro.classList.add("intro--hide");
       setTimeout(() => kissIntro.remove(), 400);
     });
@@ -942,17 +933,7 @@
       if(bigShown && !finalShown && closedCount >= totalToClose){
         finalShown = true;
         setTimeout(() => overlay.style.display = "flex", 250);
-
-        // prepara o botão "Preciso pensar" pra fugir assim que aparecer
-        setTimeout(() => {
-          if(thinkBtn){
-            thinkBtn.classList.add("is-dodging");
-            // começa no centro
-            thinkBtn.style.left = "50%";
-            thinkBtn.style.top = "6px";
-            thinkBtn.style.transform = "translateX(-50%)";
-          }
-        }, 100);
+        // ✅ NÃO coloca is-dodging aqui. Ele começa normal.
       }
     }
 
@@ -994,8 +975,13 @@
       document.getElementById("encoreOverlay").style.display = "none";
       note.textContent = "";
       yesBtn.disabled = false;
-      // thinkBtn fica habilitado, mas foge 😈
       thinkBtn.disabled = false;
+
+      // ✅ garante que volta ao normal no restart
+      thinkBtn.classList.remove("is-dodging");
+      thinkBtn.style.left = "";
+      thinkBtn.style.top = "";
+      thinkBtn.style.transform = "";
 
       if(soundOn){
         bgMusic.volume = 0.35;
@@ -1037,13 +1023,9 @@
     function showEncore(){
       const encore = document.getElementById("encoreOverlay");
       encore.style.display = "flex";
-
-      // plateia vem abaixo 🎉
       playSfxSafe(crowdCheer, { volume: 0.85 });
-      // aplausos entram logo depois
       setTimeout(() => playSfxSafe(applause, { volume: 0.75 }), 650);
 
-      // boost rápido na música
       if(soundOn){
         const original = bgMusic.volume;
         bgMusic.volume = Math.min(0.55, original + 0.15);
@@ -1064,49 +1046,62 @@
       setTimeout(showEncore, 350);
     });
 
-    // ===== BOTÃO FUGINDO (Preciso pensar) =====
+    // ===== ✅ BOTÃO FUGINDO SEM PASSAR POR CIMA DO SIM =====
     function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
+    function rectsOverlap(a, b){
+      return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+    }
+
     function moveThinkButton(){
-      if(!thinkBtn || !finalActions) return;
+      if(!thinkBtn || !finalActions || !yesBtn) return;
 
       thinkBtn.classList.add("is-dodging");
 
       const boxRect = finalActions.getBoundingClientRect();
+      const yesRect = yesBtn.getBoundingClientRect();
+
       const bw = thinkBtn.offsetWidth;
       const bh = thinkBtn.offsetHeight;
 
-      const padding = 6;
+      const padding = 8;
+
       const minX = padding;
       const maxX = Math.max(padding, boxRect.width - bw - padding);
       const minY = padding;
       const maxY = Math.max(padding, boxRect.height - bh - padding);
 
-      const x = clamp(Math.random() * maxX, minX, maxX);
-      const y = clamp(Math.random() * maxY, minY, maxY);
+      // área do SIM em coordenadas locais
+      const yesLocal = {
+        left: yesRect.left - boxRect.left - 6,
+        top: yesRect.top - boxRect.top - 6,
+        right: yesRect.right - boxRect.left + 6,
+        bottom: yesRect.bottom - boxRect.top + 6
+      };
+
+      let x = minX, y = minY;
+
+      for(let i=0; i<20; i++){
+        const rx = clamp(Math.random() * maxX, minX, maxX);
+        const ry = clamp(Math.random() * maxY, minY, maxY);
+
+        const thinkLocal = { left: rx, top: ry, right: rx + bw, bottom: ry + bh };
+        if(!rectsOverlap(thinkLocal, yesLocal)){
+          x = rx; y = ry;
+          break;
+        }
+      }
 
       thinkBtn.style.left = `${x}px`;
-      thinkBtn.style.top = `${y}px`;
-      thinkBtn.style.transform = "translateX(0)";
+      thinkBtn.style.top  = `${y}px`;
 
-      // frasezinha pra ela rir enquanto tenta clicar 😄
       if(note) note.textContent = "Eita… esse botão tá tímido 😳";
     }
 
-    // foge quando chega perto
-    thinkBtn?.addEventListener("mouseenter", moveThinkButton);
-
-    // foge quando tenta clicar
-    thinkBtn?.addEventListener("mousedown", (e) => {
-      e.preventDefault();
-      moveThinkButton();
-    });
-
-    // mobile: foge ao tocar
-    thinkBtn?.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      moveThinkButton();
-    }, { passive:false });
+    // foge quando chega perto / tenta clicar
+    thinkBtn.addEventListener("mouseenter", moveThinkButton);
+    thinkBtn.addEventListener("mousedown", (e) => { e.preventDefault(); moveThinkButton(); });
+    thinkBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveThinkButton(); }, { passive:false });
 
     setSoundUI();
     updateCounter();
