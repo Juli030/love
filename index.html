@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Está preparada para o possível início da nossa turnê? 🎸</title>
+
   <style>
     :root{
       --bg1:#07060a;
@@ -61,9 +62,7 @@
       z-index:3;
       pointer-events:none;
     }
-    .brand, .counter{
-      pointer-events:auto;
-    }
+    .brand, .counter{ pointer-events:auto; }
 
     .brand{
       display:flex; gap:10px; align-items:center;
@@ -217,9 +216,7 @@
       color: rgba(255,255,255,.78);
     }
 
-    .traffic{
-      display:flex; gap:6px; align-items:center;
-    }
+    .traffic{ display:flex; gap:6px; align-items:center; }
     .traffic i{
       display:block; width:10px; height:10px; border-radius:50%;
       opacity:.9;
@@ -280,17 +277,9 @@
       width: min(820px, calc(100vw - 40px));
       border-radius: 28px;
     }
-    .popup.big::before{
-      border-radius: 28px;
-      opacity:.75;
-    }
-    .popup.big .head{
-      padding: 12px 14px;
-    }
-    .bigText{
-      padding: 22px 18px 6px;
-      text-align:center;
-    }
+    .popup.big::before{ border-radius: 28px; opacity:.75; }
+    .popup.big .head{ padding: 12px 14px; }
+    .bigText{ padding: 22px 18px 6px; text-align:center; }
     .bigText .line1{
       font-weight: 900;
       font-size: clamp(22px, 5vw, 44px);
@@ -352,15 +341,26 @@
       font-size: 15px;
     }
     .actions{
-      position:relative;
+      position:relative; /* importante para o botão fugir */
       display:flex; justify-content:center; gap:10px; flex-wrap:wrap;
       margin-top: 10px;
+      min-height: 54px;
     }
     .smallnote{
       position:relative;
       margin-top:10px;
       font-size: 12px;
       color: rgba(255,255,255,.60);
+    }
+
+    /* Botão "Preciso pensar" quando entra no modo fuga */
+    #thinkBtn.is-dodging{
+      position:absolute;
+      left: 50%;
+      top: 6px;
+      transform: translateX(-50%);
+      will-change: left, top, transform;
+      touch-action: none;
     }
 
     /* ENCORE overlay (só no SIM) */
@@ -503,10 +503,122 @@
       position: relative;
       z-index: 1;
     }
+
+    /* ===== INTRO KISS (tela de abertura) ===== */
+    .intro{
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(1200px 600px at 50% 0%, rgba(255,0,60,.22), transparent 60%),
+        radial-gradient(900px 500px at 15% 70%, rgba(255,210,80,.12), transparent 60%),
+        radial-gradient(900px 500px at 85% 70%, rgba(255,45,85,.10), transparent 60%),
+        linear-gradient(180deg, #05040a, #120012 60%, #07060a);
+      overflow: hidden;
+    }
+
+    .intro__fx{
+      position: absolute;
+      inset: -30%;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(255,45,85,.30), transparent 45%),
+        radial-gradient(circle at 80% 35%, rgba(255,215,120,.22), transparent 48%),
+        radial-gradient(circle at 50% 75%, rgba(255,255,255,.06), transparent 55%);
+      filter: blur(10px);
+      animation: introGlow 3.4s ease-in-out infinite alternate;
+    }
+
+    @keyframes introGlow{
+      from { transform: scale(1) rotate(-2deg); opacity: .75; }
+      to   { transform: scale(1.04) rotate(2deg); opacity: 1; }
+    }
+
+    .intro__content{
+      position: relative;
+      width: min(720px, 92vw);
+      padding: 28px 22px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 22px;
+      background: rgba(255,255,255,.06);
+      box-shadow: 0 22px 80px rgba(0,0,0,.62);
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .intro__badge{
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.22);
+      letter-spacing: .14em;
+      font-size: 12px;
+      color: rgba(255,255,255,.82);
+      text-transform: uppercase;
+    }
+
+    .intro__title{
+      margin: 14px 0 6px;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.1;
+      color: rgba(255,255,255,.95);
+      text-shadow: 0 0 22px rgba(255,45,85,.35);
+    }
+
+    .intro__subtitle{
+      margin: 0 0 18px;
+      color: rgba(255,255,255,.78);
+    }
+
+    .intro__btn{
+      appearance: none;
+      border: 1px solid rgba(255,255,255,.18);
+      background: linear-gradient(180deg, rgba(255,45,85,.92), rgba(180,10,55,.92));
+      color: white;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 18px 50px rgba(255,45,85,.22);
+      transform: translateY(0);
+      transition: transform .18s ease, filter .18s ease;
+    }
+
+    .intro__btn:hover{ transform: translateY(-2px); filter: brightness(1.06); }
+    .intro__btn:active{ transform: translateY(0); }
+
+    .intro__hint{
+      display: block;
+      margin-top: 12px;
+      color: rgba(255,255,255,.60);
+    }
+
+    .intro--hide{ animation: introOut .35s ease forwards; }
+    @keyframes introOut{
+      to { opacity: 0; transform: scale(1.02); pointer-events: none; }
+    }
   </style>
 </head>
+
 <body>
-  <!-- Música (coloque o arquivo made_for_lovin_you.mp3 na mesma pasta do index.html) -->
+  <!-- INTRO -->
+  <div id="kissIntro" class="intro">
+    <div class="intro__fx"></div>
+    <div class="intro__content">
+      <div class="intro__badge">TURNÊ ESPECIAL</div>
+      <h1 class="intro__title">I Was Made For Lovin’ You</h1>
+      <p class="intro__subtitle">Uma única apresentação. Um único “sim”.</p>
+
+      <button id="btnEnterShow" class="intro__btn">
+        🎟️ Entrar no Show
+      </button>
+
+      <small class="intro__hint">Dica: som ligado deixa tudo mais épico 🎸</small>
+    </div>
+  </div>
+
   <audio id="bgMusic" preload="auto" loop>
     <source src="made_for_lovin_you.mp3" type="audio/mpeg">
   </audio>
@@ -556,9 +668,9 @@
         Eu não consigo prometer perfeição, mas consigo prometer presença,
         carinho e um abrigo so seu ao meu lado para o resto de nossas vidas.
       </p>
-      <div class="actions">
+      <div class="actions" id="finalActions">
         <button class="btn primary" id="yesBtn">Sim</button>
-        <button class="btn" id="thinkBtn">Preciso pensar</button>
+        <button class="btn" id="thinkBtn" type="button">Preciso pensar</button>
       </div>
       <div class="smallnote" id="note"></div>
     </div>
@@ -636,6 +748,7 @@
     const note = document.getElementById("note");
     const yesBtn = document.getElementById("yesBtn");
     const thinkBtn = document.getElementById("thinkBtn");
+    const finalActions = document.getElementById("finalActions");
 
     // Música
     const bgMusic = document.getElementById("bgMusic");
@@ -683,6 +796,25 @@
     soundBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       toggleSound();
+    });
+
+    // ===== INTRO: entrar no show =====
+    const kissIntro = document.getElementById("kissIntro");
+    const btnEnterShow = document.getElementById("btnEnterShow");
+
+    btnEnterShow?.addEventListener("click", async () => {
+      // tenta iniciar a música (precisa ser em clique por causa do browser)
+      try{
+        bgMusic.volume = 0.35;
+        await bgMusic.play();
+        soundOn = true;
+        setSoundUI();
+      }catch(e){
+        // se não tocar, ok
+      }
+
+      kissIntro.classList.add("intro--hide");
+      setTimeout(() => kissIntro.remove(), 400);
     });
 
     let closedCount = 0;
@@ -791,7 +923,7 @@
         el.remove();
         closedCount++;
         updateCounter();
-        checkProgress(true);
+        checkProgress();
       });
 
       dragElement(el, el.querySelector(".head"));
@@ -810,6 +942,17 @@
       if(bigShown && !finalShown && closedCount >= totalToClose){
         finalShown = true;
         setTimeout(() => overlay.style.display = "flex", 250);
+
+        // prepara o botão "Preciso pensar" pra fugir assim que aparecer
+        setTimeout(() => {
+          if(thinkBtn){
+            thinkBtn.classList.add("is-dodging");
+            // começa no centro
+            thinkBtn.style.left = "50%";
+            thinkBtn.style.top = "6px";
+            thinkBtn.style.transform = "translateX(-50%)";
+          }
+        }, 100);
       }
     }
 
@@ -851,6 +994,7 @@
       document.getElementById("encoreOverlay").style.display = "none";
       note.textContent = "";
       yesBtn.disabled = false;
+      // thinkBtn fica habilitado, mas foge 😈
       thinkBtn.disabled = false;
 
       if(soundOn){
@@ -896,7 +1040,6 @@
 
       // plateia vem abaixo 🎉
       playSfxSafe(crowdCheer, { volume: 0.85 });
-
       // aplausos entram logo depois
       setTimeout(() => playSfxSafe(applause, { volume: 0.75 }), 650);
 
@@ -910,7 +1053,6 @@
 
     document.getElementById("encoreClose").addEventListener("click", () => {
       document.getElementById("encoreOverlay").style.display = "none";
-
       if(crowdCheer){ crowdCheer.pause(); crowdCheer.currentTime = 0; }
       if(applause){ applause.pause(); applause.currentTime = 0; }
     });
@@ -919,15 +1061,52 @@
       note.textContent = "Então vem cá… agora é oficialmente nós dois 💘";
       yesBtn.disabled = true;
       thinkBtn.disabled = true;
-
       setTimeout(showEncore, 350);
     });
 
-    thinkBtn.addEventListener("click", () => {
-      note.textContent = "Tá tudo bem. Eu gosto de você com calma também 🙂";
-      yesBtn.disabled = true;
-      thinkBtn.disabled = true;
+    // ===== BOTÃO FUGINDO (Preciso pensar) =====
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+    function moveThinkButton(){
+      if(!thinkBtn || !finalActions) return;
+
+      thinkBtn.classList.add("is-dodging");
+
+      const boxRect = finalActions.getBoundingClientRect();
+      const bw = thinkBtn.offsetWidth;
+      const bh = thinkBtn.offsetHeight;
+
+      const padding = 6;
+      const minX = padding;
+      const maxX = Math.max(padding, boxRect.width - bw - padding);
+      const minY = padding;
+      const maxY = Math.max(padding, boxRect.height - bh - padding);
+
+      const x = clamp(Math.random() * maxX, minX, maxX);
+      const y = clamp(Math.random() * maxY, minY, maxY);
+
+      thinkBtn.style.left = `${x}px`;
+      thinkBtn.style.top = `${y}px`;
+      thinkBtn.style.transform = "translateX(0)";
+
+      // frasezinha pra ela rir enquanto tenta clicar 😄
+      if(note) note.textContent = "Eita… esse botão tá tímido 😳";
+    }
+
+    // foge quando chega perto
+    thinkBtn?.addEventListener("mouseenter", moveThinkButton);
+
+    // foge quando tenta clicar
+    thinkBtn?.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      moveThinkButton();
     });
+
+    // mobile: foge ao tocar
+    thinkBtn?.addEventListener("touchstart", (e) => {
+      e.preventDefault();
+      moveThinkButton();
+    }, { passive:false });
 
     setSoundUI();
     updateCounter();
